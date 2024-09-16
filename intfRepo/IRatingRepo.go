@@ -7,6 +7,7 @@ import (
 )
 
 type IRatingRepo interface {
-	GetByReaderAndBook(ctx context.Context, readerID uuid.UUID, bookID uuid.UUID) (*models.RatingModel, error)
 	Create(ctx context.Context, rating *models.RatingModel) error
+	GetByReaderAndBook(ctx context.Context, readerID uuid.UUID, bookID uuid.UUID) (*models.RatingModel, error)
+	GetByBookID(ctx context.Context, bookID uuid.UUID) ([]*models.RatingModel, error)
 }

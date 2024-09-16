@@ -3,6 +3,7 @@ package impl
 import (
 	"context"
 	"errors"
+	"github.com/google/uuid"
 	"github.com/nikitalystsev/BookSmart-services/core/models"
 	"github.com/nikitalystsev/BookSmart-services/errs"
 	"github.com/nikitalystsev/BookSmart-services/intf"
@@ -53,4 +54,18 @@ func (rs *RatingService) Create(ctx context.Context, rating *models.RatingModel)
 	}
 
 	return nil
+}
+
+// GetByBookID TODO логировать
+func (rs *RatingService) GetByBookID(ctx context.Context, bookID uuid.UUID) ([]*models.RatingModel, error) {
+	ratings, err := rs.ratingRepo.GetByBookID(ctx, bookID)
+	if err != nil && !errors.Is(err, errs.ErrRatingDoesNotExists) {
+		return nil, err
+	}
+
+	if errors.Is(err, errs.ErrRatingDoesNotExists) || len(ratings) == 0 {
+		return nil, errs.ErrRatingDoesNotExists
+	}
+
+	return ratings, nil
 }
