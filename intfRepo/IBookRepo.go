@@ -7,7 +7,7 @@ import (
 	"github.com/nikitalystsev/BookSmart-services/core/models"
 )
 
-//go:generate mockgen -source=IBookRepo.go -destination=../../../ppo_gitlab/src/internal/tests/unitTests/serviceTests/mocks/mockBookRepo.go --package=mocks
+//go:generate mockgen -source=IBookRepo.go -destination=../../../internal/tests/unitTests/serviceTests/mocks/mockBookRepo.go --package=mocks
 
 type IBookRepo interface {
 	Create(ctx context.Context, book *models.BookModel) error

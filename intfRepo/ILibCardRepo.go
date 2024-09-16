@@ -6,7 +6,7 @@ import (
 	"github.com/nikitalystsev/BookSmart-services/core/models"
 )
 
-//go:generate mockgen -source=ILibCardRepo.go -destination=../../../ppo_gitlab/src/internal/tests/unitTests/serviceTests/mocks/mockLibCardRepo.go --package=mocks
+//go:generate mockgen -source=ILibCardRepo.go -destination=../../../internal/tests/unitTests/serviceTests/mocks/mockLibCardRepo.go --package=mocks
 
 type ILibCardRepo interface {
 	Create(ctx context.Context, libCard *models.LibCardModel) error
