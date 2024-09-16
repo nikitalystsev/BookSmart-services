@@ -6,7 +6,7 @@ import (
 	"github.com/nikitalystsev/BookSmart-services/core/models"
 )
 
-//go:generate mockgen -source=IReservationRepo.go -destination=../../tests/unitTests/serviceTests/mocks/mockReservationRepo.go --package=mocks
+//go:generate mockgen -source=IReservationRepo.go -destination=../../../ppo_gitlab/src/internal/tests/unitTests/serviceTests/mocks/mockReservationRepo.go --package=mocks
 
 type IReservationRepo interface {
 	Create(ctx context.Context, reservation *models.ReservationModel) error

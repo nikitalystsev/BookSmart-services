@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-//go:generate mockgen -source=IReaderRepo.go -destination=../../tests/unitTests/serviceTests/mocks/mockReaderRepo.go --package=mocks
+//go:generate mockgen -source=IReaderRepo.go -destination=../../../ppo_gitlab/src/internal/tests/unitTests/serviceTests/mocks/mockReaderRepo.go --package=mocks
 
 type IReaderRepo interface {
 	Create(ctx context.Context, reader *models.ReaderModel) error
