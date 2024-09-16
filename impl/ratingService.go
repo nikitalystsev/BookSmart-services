@@ -7,15 +7,25 @@ import (
 	"github.com/nikitalystsev/BookSmart-services/errs"
 	"github.com/nikitalystsev/BookSmart-services/intf"
 	"github.com/nikitalystsev/BookSmart-services/intfRepo"
+	"github.com/sirupsen/logrus"
 )
 
 type RatingService struct {
 	ratingRepo      intfRepo.IRatingRepo
 	reservationRepo intfRepo.IReservationRepo
+	logger          *logrus.Entry
 }
 
-func NewRatingService(ratingRepo intfRepo.IRatingRepo, reservationRepo intfRepo.IReservationRepo) intf.IRatingService {
-	return &RatingService{ratingRepo: ratingRepo, reservationRepo: reservationRepo}
+func NewRatingService(
+	ratingRepo intfRepo.IRatingRepo,
+	reservationRepo intfRepo.IReservationRepo,
+	logger *logrus.Entry,
+) intf.IRatingService {
+	return &RatingService{
+		ratingRepo:      ratingRepo,
+		reservationRepo: reservationRepo,
+		logger:          logger,
+	}
 }
 
 // Create TODO логировать
