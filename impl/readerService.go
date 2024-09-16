@@ -115,7 +115,6 @@ func (rs *ReaderService) SignIn(ctx context.Context, phoneNumber, password strin
 	return rs.createTokens(ctx, exitingReader.ID, exitingReader.Role)
 }
 
-// GetByPhoneNumber TODO добавить в схемы (протестировано)
 func (rs *ReaderService) GetByPhoneNumber(ctx context.Context, phoneNumber string) (*models.ReaderModel, error) {
 	rs.logger.Infof("attempting to get reader by phoneNumber: %s", phoneNumber)
 
@@ -131,6 +130,25 @@ func (rs *ReaderService) GetByPhoneNumber(ctx context.Context, phoneNumber strin
 	}
 
 	rs.logger.Infof("successfully getting reader by phoneNumber: %s", phoneNumber)
+
+	return reader, nil
+}
+
+func (rs *ReaderService) GetByID(ctx context.Context, ID uuid.UUID) (*models.ReaderModel, error) {
+	rs.logger.Infof("attempting to get reader by phoneNumber: %s", ID.String())
+
+	reader, err := rs.readerRepo.GetByID(ctx, ID)
+	if err != nil && !errors.Is(err, errs.ErrReaderDoesNotExists) {
+		rs.logger.Errorf("error checking reader existence: %v", err)
+		return nil, err
+	}
+
+	if reader == nil {
+		rs.logger.Warn("reader has no exists")
+		return nil, errs.ErrReaderDoesNotExists
+	}
+
+	rs.logger.Infof("successfully getting reader by ID: %s", ID.String())
 
 	return reader, nil
 }
