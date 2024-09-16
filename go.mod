@@ -11,8 +11,6 @@ require (
 )
 
 require (
-	github.com/jmoiron/sqlx v1.4.0 // indirect
-	github.com/nikitalystsev/BookSmart-repo-postgres v0.0.0-20240913190920-c0fb8fd3d250 // indirect
 	go.uber.org/atomic v1.7.0 // indirect
 	go.uber.org/multierr v1.9.0 // indirect
 	golang.org/x/sys v0.25.0 // indirect
