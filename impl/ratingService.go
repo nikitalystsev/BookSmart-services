@@ -43,14 +43,14 @@ func (rs *RatingService) Create(ctx context.Context, rating *models.RatingModel)
 		return errs.ErrRatingAlreadyExist
 	}
 
-	existingReservation, err := rs.reservationRepo.GetByReaderAndBook(ctx, rating.ReaderID, rating.BookID)
+	existingReservations, err := rs.reservationRepo.GetByReaderAndBook(ctx, rating.ReaderID, rating.BookID)
 	if err != nil && !errors.Is(err, errs.ErrReservationDoesNotExists) {
 		rs.logger.Errorf("error getting existing reservation: %v", err)
 		return err
 	}
 
-	if existingReservation == nil {
-		rs.logger.Warn("reservation not found")
+	if existingReservations == nil {
+		rs.logger.Warn("reservations not found")
 		return errs.ErrReservationDoesNotExists
 	}
 

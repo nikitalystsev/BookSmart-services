@@ -69,10 +69,6 @@ func (rs *ReservationService) Create(ctx context.Context, readerID, bookID uuid.
 		return err
 	}
 
-	if err = rs.checkReservationExists(ctx, readerID, bookID); err != nil {
-		return err
-	}
-
 	if err = rs.create(ctx, readerID, bookID); err != nil {
 		rs.logger.Errorf("error creating reservation: %v", err)
 		return err
@@ -378,22 +374,6 @@ func (rs *ReservationService) checkAgeLimit(reader *models.ReaderModel, book *mo
 	}
 
 	rs.logger.Info("reader's age is appropriate")
-
-	return nil
-}
-
-func (rs *ReservationService) checkReservationExists(ctx context.Context, readerID, bookID uuid.UUID) error {
-	existingReservation, err := rs.reservationRepo.GetByReaderAndBook(ctx, readerID, bookID)
-	if err != nil && !errors.Is(err, errs.ErrReservationDoesNotExists) {
-		rs.logger.Errorf("error checking reservation existence: %v", err)
-		return err
-	}
-	if existingReservation != nil {
-		rs.logger.Info("reservation already exists")
-		return errs.ErrReservationAlreadyExists
-	}
-
-	rs.logger.Info("reservation does not exist")
 
 	return nil
 }
