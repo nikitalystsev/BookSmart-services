@@ -23,6 +23,8 @@ const (
 const (
 	ReservationIssuePeriodDays     = 14
 	ReservationExtensionPeriodDays = 7
+
+	ReservationsPageLimit = 10
 )
 
 type ReservationService struct {
@@ -79,7 +81,7 @@ func (rs *ReservationService) Create(ctx context.Context, readerID, bookID uuid.
 	return nil
 }
 
-func (rs *ReservationService) Update(ctx context.Context, reservation *models.ReservationModel) error {
+func (rs *ReservationService) Update(ctx context.Context, reservation *models.ReservationModel, extentionPeriodDays int) error {
 	if reservation == nil {
 		rs.logger.Warn("reservation object is nil")
 		return errs.ErrReservationObjectIsNil
@@ -103,7 +105,11 @@ func (rs *ReservationService) Update(ctx context.Context, reservation *models.Re
 		return err
 	}
 
-	reservation.ReturnDate = reservation.ReturnDate.AddDate(0, 0, ReservationExtensionPeriodDays)
+	if err := rs.checkExtentionPeriodDays(extentionPeriodDays); err != nil {
+		return err
+	}
+
+	reservation.ReturnDate = reservation.ReturnDate.AddDate(0, 0, extentionPeriodDays)
 	reservation.State = ReservationExtended
 
 	rs.logger.Info("update reservation in repository")
@@ -139,24 +145,16 @@ func (rs *ReservationService) GetByBookID(ctx context.Context, bookID uuid.UUID)
 
 }
 
-func (rs *ReservationService) GetAllReservationsByReaderID(ctx context.Context, readerID uuid.UUID) ([]*models.ReservationModel, error) {
-	activeReservations, err := rs.reservationRepo.GetActiveByReaderID(ctx, readerID)
+func (rs *ReservationService) GetByReaderID(ctx context.Context, readerID uuid.UUID, limit, offset int) ([]*models.ReservationModel, error) {
+	reservations, err := rs.reservationRepo.GetByReaderID(ctx, readerID, limit, offset)
 	if err != nil && !errors.Is(err, errs.ErrReservationDoesNotExists) {
-		rs.logger.Errorf("error checking active reservations: %v", err)
-		return nil, err
-	}
-
-	expiredReservations, err := rs.reservationRepo.GetExpiredByReaderID(ctx, readerID)
-	if err != nil && !errors.Is(err, errs.ErrReservationDoesNotExists) {
-		rs.logger.Errorf("error checking expired book existence: %v", err)
+		rs.logger.Errorf("error checking reservations: %v", err)
 		return nil, err
 	}
 
 	rs.logger.Info("successfully get reservations")
 
-	allReservations := append(activeReservations, expiredReservations...)
-
-	return allReservations, nil
+	return reservations, nil
 }
 
 func (rs *ReservationService) GetByID(ctx context.Context, ID uuid.UUID) (*models.ReservationModel, error) {
@@ -412,6 +410,21 @@ func (rs *ReservationService) checkReservationState(reservationState string) err
 	}
 
 	rs.logger.Info("reservation is only issued")
+
+	return nil
+}
+
+func (rs *ReservationService) checkExtentionPeriodDays(extentionPeriodDays int) error {
+	if extentionPeriodDays >= ReservationExtensionPeriodDays {
+		rs.logger.Warn("extention period days is big")
+		return errs.ErrExtentionPeriodDaysIsBig
+	}
+	if extentionPeriodDays < 3 {
+		rs.logger.Warn("extention period days is small")
+		return errs.ErrExtentionPeriodDaysIsSmall
+	}
+
+	rs.logger.Info("extention period days is good")
 
 	return nil
 }

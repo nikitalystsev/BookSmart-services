@@ -55,14 +55,9 @@ func NewReaderService(
 
 // SignUp Зарегистрироваться
 func (rs *ReaderService) SignUp(ctx context.Context, reader *models.ReaderModel) error {
-	if reader == nil {
-		rs.logger.Warn("reader object is nil")
-		return errs.ErrReaderObjectIsNil
-	}
-
 	rs.logger.Info("attempting to sign up")
 
-	if err := rs.baseValidation(ctx, reader); err != nil {
+	if err := rs.checkReaderCanBeSignUp(ctx, reader); err != nil {
 		rs.logger.Errorf("reader validation failed: %v", err)
 		return err
 	}
@@ -208,9 +203,8 @@ func (rs *ReaderService) AddToFavorites(ctx context.Context, readerID, bookID uu
 	return nil
 }
 
-func (rs *ReaderService) baseValidation(ctx context.Context, reader *models.ReaderModel) error {
+func (rs *ReaderService) checkReaderCanBeSignUp(ctx context.Context, reader *models.ReaderModel) error {
 	existingReader, err := rs.readerRepo.GetByPhoneNumber(ctx, reader.PhoneNumber)
-
 	if err != nil && !errors.Is(err, errs.ErrReaderDoesNotExists) {
 		rs.logger.Errorf("error checking reader existence: %v", err)
 		return err

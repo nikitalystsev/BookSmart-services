@@ -13,4 +13,6 @@ var (
 	ErrReservationObjectIsNil       = errors.New("[!] reservationService error! Reservation object is nil")
 	ErrReservationDoesNotExists     = errors.New("[!] reservationService error! Reservation does not exists")
 	ErrReservationAlreadyExists     = errors.New("[!] reservationService error! Reservation already exists")
+	ErrExtentionPeriodDaysIsBig     = errors.New("[!] reservationService error! Reservation period days is big")
+	ErrExtentionPeriodDaysIsSmall   = errors.New("[!] reservationService error! Reservation period days is small")
 )

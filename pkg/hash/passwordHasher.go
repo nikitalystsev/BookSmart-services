@@ -1,11 +1,14 @@
 package hash
 
 import (
+	"errors"
 	"fmt"
 	"golang.org/x/crypto/bcrypt"
 )
 
 //go:generate mockgen -source=passwordHasher.go -destination=../../../tests/unitTests/serviceTests/mocks/mockPasswordHasher.go --package=mocks
+
+var ErrInvalidLoginOrPassword = errors.New("invalid login or password")
 
 // IPasswordHasher provides hashing logic to securely store passwords.
 type IPasswordHasher interface {
@@ -35,7 +38,7 @@ func (ph *PasswordHasher) Hash(password string) (string, error) {
 func (ph *PasswordHasher) Compare(hashedPassword, password string) error {
 	err := bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(password+ph.salt))
 	if err != nil {
-		return fmt.Errorf("wrong password")
+		return ErrInvalidLoginOrPassword
 	}
 
 	return nil

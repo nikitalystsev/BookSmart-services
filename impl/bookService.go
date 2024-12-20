@@ -16,6 +16,8 @@ const (
 	BookRarityCommon = "Common"
 	BookRarityRare   = "Rare"
 	BookRarityUnique = "Unique"
+
+	BooksPageLimit = 12
 )
 
 type BookService struct {
@@ -35,7 +37,7 @@ func (bs *BookService) Create(ctx context.Context, book *models.BookModel) error
 
 	bs.logger.Info("attempting to create book")
 
-	if err := bs.baseValidation(ctx, book); err != nil {
+	if err := bs.checkBookCanBeAdded(ctx, book); err != nil {
 		bs.logger.Errorf("book validation failed: %v", err)
 		return err
 	}
@@ -119,7 +121,7 @@ func (bs *BookService) GetByParams(ctx context.Context, params *dto.BookParamsDT
 	return books, nil
 }
 
-func (bs *BookService) baseValidation(ctx context.Context, book *models.BookModel) error {
+func (bs *BookService) checkBookCanBeAdded(ctx context.Context, book *models.BookModel) error {
 	existingBook, err := bs.bookRepo.GetByID(ctx, book.ID)
 	if err != nil && !errors.Is(err, errs.ErrBookDoesNotExists) {
 		bs.logger.Errorf("error checking book existence: %v", err)
