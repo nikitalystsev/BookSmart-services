@@ -73,7 +73,7 @@ func (rs *ReaderService) SignUp(ctx context.Context, reader *models.ReaderModel)
 	reader.Role = ReaderRole
 	reader.Password = hashedPassword
 
-	rs.logger.Infof("creating reader in repository: %+v", reader)
+	rs.logger.Infof("creating reader in repository")
 
 	if err = rs.readerRepo.Create(ctx, reader); err != nil {
 		rs.logger.Errorf("error creating reader: %v", err)
